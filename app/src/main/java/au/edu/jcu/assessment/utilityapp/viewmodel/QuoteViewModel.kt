@@ -4,33 +4,36 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import au.edu.jcu.assessment.utilityapp.data.Quote
 import au.edu.jcu.assessment.utilityapp.data.QuoteRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class QuoteViewModel(
     private val quoteRepository: QuoteRepository
 ) : ViewModel() {
 
-    var quote: Quote? = null
-        private set
+    private val _quote = MutableStateFlow<Quote?>(null)
+    val quote: StateFlow<Quote?> = _quote
 
-    var isLoading: Boolean = false
-        private set
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
-    var errorMessage: String? = null
-        private set
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
 
     fun loadQuote() {
         viewModelScope.launch {
-            isLoading = true
-            errorMessage = null
+            _isLoading.value = true
+            _errorMessage.value = null
 
             try {
-                quote = quoteRepository.getRandomQuote()
+                _quote.value = quoteRepository.getRandomQuote()
             } catch (e: Exception) {
-                errorMessage = "Unable to load a quote. Please try again."
+                _errorMessage.value =
+                    "Unable to load a quote. Please try again."
+            } finally {
+                _isLoading.value = false
             }
-
-            isLoading = false
         }
     }
 }
