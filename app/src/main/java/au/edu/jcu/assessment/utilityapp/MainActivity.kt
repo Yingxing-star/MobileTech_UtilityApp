@@ -21,6 +21,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,10 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import au.edu.jcu.assessment.utilityapp.ui.theme.MobileTech_UtilityAppTheme
 import au.edu.jcu.assessment.utilityapp.di.networkModule
+import au.edu.jcu.assessment.utilityapp.viewmodel.QuoteViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
+    private val quoteViewModel: QuoteViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startKoin {
@@ -45,7 +49,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MobileTech_UtilityAppTheme {
-                UtilityApp()
+                UtilityApp(quoteViewModel)
             }
         }
     }
@@ -55,12 +59,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun UtilityAppPreview() {
     MobileTech_UtilityAppTheme {
-        UtilityApp()
+        UtilityAppPreviewContent()
     }
 }
 
 @Composable
-fun UtilityApp() {
+fun UtilityAppPreviewContent() {
+    Text("Mindful Minutes")
+}
+
+@Composable
+fun UtilityApp(quoteViewModel: QuoteViewModel) {
     var selectedTab by remember { mutableStateOf("Utility") }
     var defaultMinutes by remember { mutableStateOf(5) }
     var selectedMinutes by remember { mutableStateOf(5) }
@@ -94,10 +103,12 @@ fun UtilityApp() {
                     remainingSeconds = remainingSeconds,
                     onRemainingSecondsChange = { remainingSeconds = it },
                     isStarted = isStarted,
-                    onIsStartedChange = { isStarted = it }
+                    onIsStartedChange = { isStarted = it },
+                    quoteViewModel = quoteViewModel
                 )
 
-                "Settings" -> SettingsScreen(defaultMinutes) {
+
+                "Settings"-> SettingsScreen(defaultMinutes) {
                     defaultMinutes = it
                 }
             }
@@ -114,8 +125,17 @@ fun UtilityScreen(
     remainingSeconds: Int,
     onRemainingSecondsChange: (Int) -> Unit,
     isStarted: Boolean,
-    onIsStartedChange: (Boolean) -> Unit
+    onIsStartedChange: (Boolean) -> Unit,
+    quoteViewModel: QuoteViewModel
 ) {
+
+    val quote by quoteViewModel.quote.collectAsState()
+    val isLoading by quoteViewModel.isLoading.collectAsState()
+    val errorMessage by quoteViewModel.errorMessage.collectAsState()
+
+    LaunchedEffect(Unit) {
+        quoteViewModel.loadQuote()
+    }
 
     LaunchedEffect(isStarted, remainingSeconds) {
         if (isStarted && remainingSeconds > 0) {
@@ -140,6 +160,41 @@ fun UtilityScreen(
         Text(
             text = "Take a moment for yourself.",
             style = MaterialTheme.typography.bodyLarge
+        )
+        if (isLoading) {
+            Text("Loading quote...")
+        }
+
+        if (quote != null) {
+            Text(
+                text = "\"${quote!!.text}\"",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Text(
+                text = "- ${quote!!.author}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage!!,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
+        Button(
+            onClick = {
+                quoteViewModel.loadQuote()
+            }
+        ) {
+            Text("New Quote")
+        }
+
+        Text(
+            text = "Quotes provided by ZenQuotes.io",
+            style = MaterialTheme.typography.bodySmall
         )
 
         Text(
