@@ -2,6 +2,8 @@ package au.edu.jcu.assessment.utilityapp.di
 
 import au.edu.jcu.assessment.utilityapp.data.QuoteRepository
 import au.edu.jcu.assessment.utilityapp.data.QuotesApi
+import au.edu.jcu.assessment.utilityapp.viewmodel.QuoteViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -29,5 +31,8 @@ val networkModule = module {
 
     single {
         QuoteRepository(get())
+    }
+    viewModel {
+        QuoteViewModel(get())
     }
 }
