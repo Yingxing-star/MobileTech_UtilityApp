@@ -1,55 +1,80 @@
 # MobileTech Utility App
 
-This is a basic Android app template for **Assessment 1: Utility App**.
-It provides the structure for a simple tabular UI using **Jetpack Compose** and **Material Design 3**.
+Project Overview
 
+"Mindful Minutes" is an Android utility app designed to help users engage in short meditation and mindfulness sessions. Users can select a meditation duration, control a countdown timer, and view randomly generated inspirational quotes.
+
+This project was developed for the "Assessment 1: Utility App" assignment in the CP3406 course.
 ---
 
-## Getting Started
+## Features
+
+- Meditation Timer: Choose from meditation durations of 5, 10, or 15 minutes.
+- Start and Pause: Start or pause the countdown timer.
+- Reset Timer: Reset the countdown to a newly selected duration.
+- Completion: Displays a notification message when the countdown reaches zero.
+- Settings: Configure the default meditation duration.
+- Random Quotes: Fetches and displays inspirational quotes and their authors via the ZenQuotes API.
+- Loading and Error Handling: Shows a loading indicator while fetching quotes; displays a user-friendly error message if the request fails.
+- Bottom Navigation: Switch between the "Utility" page and the "Settings" page.
+
+## Technologies Used
+
+- Kotlin
+- Android Studio
+- Jetpack Compose
+- Material Design 3
+- Android ViewModel
+- Kotlin Coroutines and StateFlow
+- Repository pattern
+- Retrofit (for HTTP requests)
+- Kotlinx Serialization (for JSON parsing)
+- Koin (for dependency injection)
+- JUnit and Mockito (for unit testing)
+
+## External API
+
+This app uses the [ZenQuotes API](https://zenquotes.io/) to retrieve random inspirational quotes.
+
+API Endpoint: `https://zenquotes.io/api/random`
+
+The API response includes the quote content and the author's name. The app displays these quotes and attributes them to ZenQuotes.
+
+Please refer to the official ZenQuotes website for the latest terms of use and request limits.
+
+## Project Structure
+
+- `MainActivity.kt` – Contains the user interface (UI) for the app’s main navigation, utility pages, settings, and a meditation timer.
+- `data/Quote.kt` – Defines the data model for quotes.
+- `data/QuotesApi.kt` – Defines the Retrofit API interface.
+- `data/QuoteRepository.kt` – Fetches quote data via the API interface.
+- `di/NetworkModule.kt` – Configures Retrofit, the repository layer, and Koin dependencies.
+- `viewmodel/QuoteViewModel.kt` – Manages quote data, loading states, and error states.
+- `src/test/` – Contains unit tests for the quote repository and ViewModel.
 
 ### How to Run
-1. Clone or download this repo  
-2. Open in Android Studio  
-3. Run on an emulator or physical device (API 26+ recommended)  
+1. Clone or download this repository.
+2. Open the project in Android Studio.
+3. Wait for Gradle to complete synchronization and resolve project dependencies.
+4. Launch an Android emulator or connect a compatible Android device.
+5. Click the "Run" button in Android Studio to start the app.
 
+An internet connection is required to retrieve quotes from ZenQuotes.
 ---
+## Running Unit Tests
 
-## Composables
+To run local unit tests in Android Studio, follow these steps:
 
-### UtilityApp()
-- Contains the screen layout using a Scaffold
-- Toggles content between Utility and Settings
+1. Navigate to the `app/src/test` directory.
+2. Right-click on a test class.
+3. Select **Run**.
 
-### UtilityScreen()
-- Displays a simple counter (replace with your utility logic)  
-- Includes a button to increment the counter
+Alternatively, run the following command from the project root directory:
 
-### SettingsScreen()
-- Placeholder for user preferences or configuration  
-- Can be extended to modify main screen behavior (e.g., theme, units, limits)  
+```powershell
+.\gradlew.bat testDebugUnitTest
+```
+## Acknowledgments
 
----
-
-## Key Concepts Covered
-
-| Week | Concept                        | Used In                          |
-|------|--------------------------------|----------------------------------|
-| 1    | Kotlin + Android Studio         | MainActivity.kt |
-| 2    | Jetpack Compose Layouts         | UtilityApp(), UtilityScreen(), SettingsScreen()   |
-| 3    | Material Design 3               | MobileTechUtilityAppTheme, MaterialTheme.typography |
-| 4    | ViewModel | Not included in starter          |
-| 5    | Retrofit  | Not included in starter          |
-
----
-
-## Suggested Extensions
-- Replace counter with a real utility (e.g., hydration tracker, timer)  
-- Add a ViewModel for state management  
-- Use SharedPreferences or DataStore to persist settings  
-- Add a simple API call using Retrofit (e.g., fetch weather or quotes)  
-
----
-
-## 📚 License
-This template is provided for educational use in CP3406.  
-Feel free to modify and extend it for your assessment.
+- Quotes are provided by [ZenQuotes.io](https://zenquotes.io/).
+- This project was developed for educational purposes as part of Assessment 1 for the course CP3406.
