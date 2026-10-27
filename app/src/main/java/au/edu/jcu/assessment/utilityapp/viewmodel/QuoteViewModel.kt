@@ -30,7 +30,7 @@ class QuoteViewModel(
                 _quote.value = quoteRepository.getRandomQuote()
             } catch (e: Exception) {
                 _errorMessage.value =
-                    "Error: ${e.javaClass.simpleName}: ${e.message}"
+                    "Unable to load a quote. Please try again."
             } finally {
                 _isLoading.value = false
             }
